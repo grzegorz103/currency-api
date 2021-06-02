@@ -2,8 +2,11 @@ package currencies.api.services;
 
 import currencies.api.mappers.UserMapper;
 import currencies.api.models.BankAccount;
+import currencies.api.models.CurrencyType;
+import currencies.api.models.Saldo;
 import currencies.api.models.User;
 import currencies.api.repository.BankAccountRepository;
+import currencies.api.repository.SaldoRepository;
 import currencies.api.repository.UserRepository;
 import currencies.api.web.dto.UserIn;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -13,12 +16,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedList;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
+    private final SaldoRepository saldoRepository;
 
     private final BankAccountRepository bankAccountRepository;
 
@@ -26,17 +32,21 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
 
-    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, BCryptPasswordEncoder encoder, BankAccountRepository bankAccountRepository) {
+    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, BCryptPasswordEncoder encoder, BankAccountRepository bankAccountRepository, SaldoRepository saldoRepository) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.bankAccountRepository = bankAccountRepository;
+        this.saldoRepository = saldoRepository;
     }
 
     @Override
     @Transactional
     public void create(UserIn userIn) {
         User mapped = userMapper.toModel(userIn);
+
+        bankAccountRepository.findBankAccountByUser_Pesel(userIn.getPesel());
+
         mapped.setCredentials(false);
         mapped.setEnabled(true);
         mapped.setPassword(encoder.encode(userIn.getPassword()));
@@ -45,17 +55,20 @@ public class UserServiceImpl implements UserService {
 
         BankAccount bankAccountSave = BankAccount.builder()
                 .number(RandomStringUtils.randomNumeric(26, 26))
-                .saldos(
-                        new LinkedList<>()
-                )
                 .user(save)
                 .build();
 
         BankAccount bankAccount = bankAccountRepository.save(bankAccountSave);
+
+        Saldo plnSaldo = Saldo.builder().balance(userIn.getInitialBalance()).bankAccount(bankAccount).currencyType(CurrencyType.PLN).build();
+        Saldo usdSaldo = Saldo.builder().balance(BigDecimal.ZERO).bankAccount(bankAccount).currencyType(CurrencyType.USD).build();
+
+        saldoRepository.save(plnSaldo);
+        saldoRepository.save(usdSaldo);
     }
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return userRepository.findByPesel(s).orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepository.findByPesel(s).orElseThrow(() -> new RuntimeException("User not found" + s));
     }
 }

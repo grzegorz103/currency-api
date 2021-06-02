@@ -1,6 +1,7 @@
 package currencies.api.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import currencies.api.config.UrlConfig;
 import currencies.api.services.UserService;
 import currencies.api.web.dto.UserIn;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -36,9 +38,12 @@ public class UserControllerTest {
     public void createUserTest() throws Exception {
         doNothing().when(userService).create(any(UserIn.class));
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
         this.mockMvc.perform(post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(new UserIn("testName", "testSurname", BigDecimal.TEN, "91919112123", "password"))))
+                .content(objectMapper.writeValueAsString(new UserIn("testName", "testSurname", LocalDate.of(1960, 10, 10), BigDecimal.TEN, "91919112123", "password"))))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isCreated());
     }
