@@ -1,5 +1,6 @@
 package currencies.api.web.dto;
 
+import currencies.api.models.CurrencyType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,16 +10,11 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserIn {
+public class SaldoOut {
 
-    private String name;
+    private Long id;
 
-    private String surname;
+    private BigDecimal balance;
 
-    private BigDecimal initialBalance;
-
-    private String pesel;
-
-    private String password;
-
+    private CurrencyType currencyType;
 }

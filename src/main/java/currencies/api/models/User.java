@@ -31,15 +31,14 @@ public class User implements UserDetails {
     @Column(name="surname")
     private String surname;
 
-    @Column(name="username")
-    private String username;
+    @Column(name="pesel")
+    private String pesel;
 
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private Set<BankAccount> bankAccounts;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private BankAccount bankAccount;
 
     @Column(name = "credentials")
     private boolean credentials;
@@ -59,7 +58,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return pesel;
     }
 
     @Override

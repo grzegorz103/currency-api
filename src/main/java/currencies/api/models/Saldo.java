@@ -25,7 +25,7 @@ public class Saldo {
     @Enumerated(EnumType.STRING)
     private CurrencyType currencyType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bank_account_id")
     private BankAccount bankAccount;
 

@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,18 +33,18 @@ public class UserControllerTest {
     private String BASE_URL = UrlConfig.API_VERSION + UrlConfig.USER_URL;
 
     @Test
-    public void getAllCharactersTest() throws Exception {
+    public void createUserTest() throws Exception {
         doNothing().when(userService).create(any(UserIn.class));
 
         this.mockMvc.perform(post(BASE_URL)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(new ObjectMapper().writeValueAsString(new UserIn("testName", "testSurname", BigDecimal.TEN))))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(new UserIn("testName", "testSurname", BigDecimal.TEN, "91919112123", "password"))))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isCreated());
     }
 
     @Test
-    public void getAllCharactersNoBodyTest() throws Exception {
+    public void createUserNoBodyTest() throws Exception {
         doNothing().when(userService).create(any(UserIn.class));
 
         this.mockMvc.perform(post(BASE_URL))
