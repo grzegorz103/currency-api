@@ -3,6 +3,7 @@ package currencies.api.web.controllers;
 import currencies.api.config.UrlConfig;
 import currencies.api.services.UserService;
 import currencies.api.web.dto.UserIn;
+import currencies.api.web.dto.UserOut;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,8 +26,13 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("isAnonymous()")
-    public void create(@Valid @RequestBody UserIn userIn) {
-        userService.create(userIn);
+    public UserOut create(@Valid @RequestBody UserIn userIn) {
+        return userService.create(userIn);
+    }
+
+    @GetMapping("/{pesel}")
+    public UserOut findById(@PathVariable("pesel") String pesel) {
+        return userService.findByPesel(pesel);
     }
 
 }
