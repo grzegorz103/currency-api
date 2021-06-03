@@ -1,6 +1,7 @@
-package currencies.api.web.client;
+package currencies.api.web.nbp.providers;
 
 import currencies.api.models.CurrencyType;
+import currencies.api.web.nbp.dto.NbpCurrency;
 
 import java.math.BigDecimal;
 import java.util.Collections;

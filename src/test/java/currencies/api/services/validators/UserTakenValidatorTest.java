@@ -1,18 +1,12 @@
 package currencies.api.services.validators;
 
-import currencies.api.models.User;
 import currencies.api.repository.UserRepository;
 import currencies.api.validators.UserTakenValidatorImpl;
-import currencies.api.web.dto.UserIn;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;

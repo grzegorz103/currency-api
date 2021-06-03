@@ -1,8 +1,6 @@
 package currencies.api.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import currencies.api.models.CurrencyType;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +27,7 @@ public class ConversionIn {
     private CurrencyType destinedCurrencyType;
 
     @NotNull
-    @Positive(message = "Balance must be positive1")
+    @Positive(message = "Balance must be positive")
     @ApiModelProperty(example = "10")
     private BigDecimal balance;
 

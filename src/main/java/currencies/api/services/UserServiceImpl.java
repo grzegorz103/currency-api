@@ -11,16 +11,13 @@ import currencies.api.repository.UserRepository;
 import currencies.api.web.dto.UserIn;
 import currencies.api.web.dto.UserOut;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -29,20 +26,16 @@ public class UserServiceImpl implements UserService {
 
     private final BankAccountRepository bankAccountRepository;
 
-    private final BCryptPasswordEncoder encoder;
-
     private final UserMapper userMapper;
 
-    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, BCryptPasswordEncoder encoder, BankAccountRepository bankAccountRepository, SaldoRepository saldoRepository) {
+    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository, BankAccountRepository bankAccountRepository, SaldoRepository saldoRepository) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
-        this.encoder = encoder;
         this.bankAccountRepository = bankAccountRepository;
         this.saldoRepository = saldoRepository;
     }
 
     @Override
-    @Transactional
     public UserOut create(UserIn userIn) {
         User mapped = userMapper.toModel(userIn);
 

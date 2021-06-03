@@ -25,6 +25,6 @@ public class BankAccountServiceImpl implements BankAccountService {
                 bankAccountRepository.findById(id)
                         .orElseThrow(() -> new RuntimeException("Bank account not found"))
         );
-
     }
+
 }

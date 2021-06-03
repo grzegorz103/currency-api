@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import currencies.api.config.UrlConfig;
 import currencies.api.models.CurrencyType;
 import currencies.api.services.ConversionService;
-import currencies.api.web.dto.BankAccountOut;
 import currencies.api.web.dto.ConversionIn;
 import currencies.api.web.dto.ConversionOut;
 import org.junit.jupiter.api.Test;
@@ -19,9 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import java.math.BigDecimal;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

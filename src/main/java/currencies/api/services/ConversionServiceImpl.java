@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -37,9 +36,8 @@ public class ConversionServiceImpl implements ConversionService {
         Saldo sourceSaldo = this.getSaldo(bankAccount, conversionIn.getSourceCurrencyType());
         Saldo destinedSaldo = this.getSaldo(bankAccount, conversionIn.getDestinedCurrencyType());
 
-        if (!hasSufficientBalance(sourceSaldo, conversionIn.getBalance())) {
-            throw new RuntimeException("Insufficient balance on source saldo");
-        }
+        validateCurrencyType(conversionIn);
+        validateSourceSaldo(conversionIn, sourceSaldo);
 
         BigDecimal convertedBalance = currencyConverter.convert(conversionIn.getBalance(), conversionIn.getSourceCurrencyType(), conversionIn.getDestinedCurrencyType());
 
@@ -52,15 +50,7 @@ public class ConversionServiceImpl implements ConversionService {
         Saldo sourceSaldoSaved = saldoRepository.save(sourceSaldo);
         Saldo destinedSaldoSaved = saldoRepository.save(destinedSaldo);
 
-        return ConversionOut.builder()
-                .balance(conversionIn.getBalance())
-                .sourceCurrencyType(conversionIn.getSourceCurrencyType())
-                .destinedCurrencyType(conversionIn.getDestinedCurrencyType())
-                .sourceSaldoBeforeConversion(sourceBalanceBefore)
-                .sourceSaldoAfterConversion(sourceSaldoSaved.getBalance())
-                .destinedSaldoBeforeConversion(destinedBalanceBefore)
-                .destinedSaldoAfterConversion(destinedSaldoSaved.getBalance())
-                .build();
+        return buildConversionOut(conversionIn, sourceBalanceBefore, destinedBalanceBefore, sourceSaldoSaved, destinedSaldoSaved);
     }
 
     private boolean hasSufficientBalance(Saldo sourceSaldo, BigDecimal balance) {
@@ -72,7 +62,31 @@ public class ConversionServiceImpl implements ConversionService {
                 .stream()
                 .filter(saldo -> saldo.getCurrencyType() == currencyType)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(currencyType + "saldo not found"));
+                .orElseThrow(() -> new RuntimeException(String.format("%s saldo not found", currencyType)));
+    }
+
+    private ConversionOut buildConversionOut(ConversionIn conversionIn, BigDecimal sourceBalanceBefore, BigDecimal destinedBalanceBefore, Saldo sourceSaldoSaved, Saldo destinedSaldoSaved) {
+        return ConversionOut.builder()
+                .balance(conversionIn.getBalance())
+                .sourceCurrencyType(conversionIn.getSourceCurrencyType())
+                .destinedCurrencyType(conversionIn.getDestinedCurrencyType())
+                .sourceSaldoBeforeConversion(sourceBalanceBefore)
+                .sourceSaldoAfterConversion(sourceSaldoSaved.getBalance())
+                .destinedSaldoBeforeConversion(destinedBalanceBefore)
+                .destinedSaldoAfterConversion(destinedSaldoSaved.getBalance())
+                .build();
+    }
+
+    private void validateSourceSaldo(ConversionIn conversionIn, Saldo sourceSaldo) {
+        if (!hasSufficientBalance(sourceSaldo, conversionIn.getBalance())) {
+            throw new RuntimeException("Insufficient balance on source saldo");
+        }
+    }
+
+    private void validateCurrencyType(ConversionIn conversionIn) {
+        if (conversionIn.getSourceCurrencyType() == conversionIn.getDestinedCurrencyType()) {
+            throw new RuntimeException("Source and destined currency type can not be the same");
+        }
     }
 
 }

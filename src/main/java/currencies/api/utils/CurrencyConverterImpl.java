@@ -1,8 +1,7 @@
 package currencies.api.utils;
 
 import currencies.api.models.CurrencyType;
-import currencies.api.web.client.AbstractNbpCurrencyProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import currencies.api.web.nbp.providers.AbstractNbpCurrencyProvider;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

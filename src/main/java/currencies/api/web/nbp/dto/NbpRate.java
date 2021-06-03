@@ -1,4 +1,4 @@
-package currencies.api.web.client;
+package currencies.api.web.nbp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
