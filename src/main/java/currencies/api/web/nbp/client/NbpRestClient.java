@@ -15,8 +15,6 @@ public class NbpRestClient {
 
     private AbstractNbpCurrencyProvider currencyProvider;
 
-    private HashMap<String, BigDecimal> currencies = new HashMap<>();
-
     public NbpRestClient(NbpCurrencyProvider currencyProvider,
                          @Value("${nbp.url}") String nbpUrl) {
         this.currencyProvider = currencyProvider;
