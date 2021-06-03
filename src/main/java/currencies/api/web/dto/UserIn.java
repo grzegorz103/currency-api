@@ -2,6 +2,7 @@ package currencies.api.web.dto;
 
 import currencies.api.validators.AdultValidator;
 import currencies.api.validators.UserTakenValidator;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,13 +25,16 @@ public class UserIn {
     private String surname;
 
     @AdultValidator
+    @ApiModelProperty(example = "1990-01-10")
     private LocalDate birthDay;
 
     @NotNull
     @Positive(message = "Initial balance must be positive")
+    @ApiModelProperty(example = "10000")
     private BigDecimal initialBalance;
 
     @UserTakenValidator
+    @ApiModelProperty(example = "66020699999")
     private String pesel;
 
 }

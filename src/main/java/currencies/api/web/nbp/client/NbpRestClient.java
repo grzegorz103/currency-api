@@ -1,15 +1,14 @@
-package currencies.api.web.client;
+package currencies.api.web.nbp.client;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.beans.factory.annotation.Autowired;
+import currencies.api.web.nbp.dto.NbpCurrency;
+import currencies.api.web.nbp.providers.AbstractNbpCurrencyProvider;
+import currencies.api.web.nbp.providers.NbpCurrencyProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 @Component
 public class NbpRestClient {

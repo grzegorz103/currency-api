@@ -1,5 +1,7 @@
 package currencies.api.web.exceptions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +17,11 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handleInvalidArgs(MethodArgumentNotValidException exception) {
+        logger.info(String.format("Handling validation exception %s", exception.getMessage()));
         BindingResult bindingResult = exception.getBindingResult();
         List<String> errMessages = bindingResult.getAllErrors()
                 .stream()
@@ -26,7 +31,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiResponse> handleRuntimeExceptions(RuntimeException exception){
+    public ResponseEntity<ApiResponse> handleRuntimeExceptions(RuntimeException exception) {
+        logger.info(String.format("Handling runtime exception %s", exception.getMessage()));
         return new ResponseEntity<>(new ApiResponse(Collections.singletonList(exception.getMessage())), HttpStatus.BAD_REQUEST);
     }
 
