@@ -43,7 +43,7 @@ public class UserControllerTest {
 
         this.mockMvc.perform(post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new UserIn("testName", "testSurname", LocalDate.of(1960, 10, 10), BigDecimal.TEN, "91919112123", "password"))))
+                .content(objectMapper.writeValueAsString(new UserIn("testName", "testSurname", LocalDate.of(1960, 10, 10), BigDecimal.TEN, "91919112123"))))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isCreated());
     }

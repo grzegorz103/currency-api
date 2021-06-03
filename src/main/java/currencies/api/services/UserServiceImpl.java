@@ -49,7 +49,6 @@ public class UserServiceImpl implements UserService {
 
         mapped.setCredentials(false);
         mapped.setEnabled(true);
-        mapped.setPassword(encoder.encode(userIn.getPassword()));
 
         User save = userRepository.save(mapped);
 
@@ -67,8 +66,4 @@ public class UserServiceImpl implements UserService {
         saldoRepository.save(usdSaldo);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return userRepository.findByPesel(s).orElseThrow(() -> new RuntimeException("User not found" + s));
-    }
 }
