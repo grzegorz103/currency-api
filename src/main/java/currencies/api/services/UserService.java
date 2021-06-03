@@ -1,10 +1,12 @@
 package currencies.api.services;
 
 import currencies.api.web.dto.UserIn;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import currencies.api.web.dto.UserOut;
 
-public interface UserService extends UserDetailsService {
+public interface UserService {
 
-    void create(UserIn userIn);
+    UserOut create(UserIn userIn);
+
+    UserOut findByPesel(String pesel);
 
 }

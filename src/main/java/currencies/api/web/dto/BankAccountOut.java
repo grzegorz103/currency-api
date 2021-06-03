@@ -4,17 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserOut {
+public class BankAccountOut {
 
-    private String name;
+    private Long id;
 
-    private String surname;
+    private String number;
 
-    private String pesel;
-
-    private Long bankAccountId;
+    private List<SaldoOut> saldos;
 
 }
