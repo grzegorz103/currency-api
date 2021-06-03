@@ -29,13 +29,13 @@ public class UserTakenValidatorTest {
 
     @Test
     public void userNotExistsTest() {
-        when(userRepository.findByPesel(anyString())).thenReturn(Optional.empty());
+        when(userRepository.existsByPesel(anyString())).thenReturn(false);
         assertThat(userTakenValidator.isValid("123", null)).isTrue();
     }
 
     @Test
-    public void userExistsTest() {
-        when(userRepository.findByPesel(anyString())).thenReturn(Optional.of(new User()));
+    public void userAlreadyExistsTest() {
+        when(userRepository.existsByPesel(anyString())).thenReturn(true);
         assertThat(userTakenValidator.isValid("123", null)).isFalse();
     }
 
