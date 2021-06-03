@@ -8,7 +8,6 @@ import currencies.api.repository.SaldoRepository;
 import currencies.api.utils.CurrencyConverter;
 import currencies.api.web.dto.ConversionIn;
 import currencies.api.web.dto.ConversionOut;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class ConversionServiceImpl implements ConversionService{
+public class ConversionServiceImpl implements ConversionService {
 
     private final BankAccountRepository bankAccountRepository;
 
@@ -33,40 +32,47 @@ public class ConversionServiceImpl implements ConversionService{
 
 
     @Override
-    public void create(ConversionIn conversionIn) {
+    public ConversionOut create(ConversionIn conversionIn) {
         BankAccount bankAccount = bankAccountRepository.findById(conversionIn.getBankAccountId()).orElseThrow(() -> new RuntimeException("Bank account not found"));
-        Optional<Saldo> sourceSaldo = this.getSaldo(bankAccount, conversionIn.getSourceCurrencyType());
-        Optional<Saldo> destinedSaldo = this.getSaldo(bankAccount, conversionIn.getDestinedCurrencyType());
+        Saldo sourceSaldo = this.getSaldo(bankAccount, conversionIn.getSourceCurrencyType());
+        Saldo destinedSaldo = this.getSaldo(bankAccount, conversionIn.getDestinedCurrencyType());
 
-        if(!hasSufficientBalance(sourceSaldo)) {
-            throw new RuntimeException("Insufficient balance");
+        if (!hasSufficientBalance(sourceSaldo, conversionIn.getBalance())) {
+            throw new RuntimeException("Insufficient balance on source saldo");
         }
 
-        if(sourceSaldo.isPresent() && destinedSaldo.isPresent()) {
-            BigDecimal convertedBalance = currencyConverter.convert(conversionIn.getBalance(), conversionIn.getSourceCurrencyType(), conversionIn.getDestinedCurrencyType());
+        BigDecimal convertedBalance = currencyConverter.convert(conversionIn.getBalance(), conversionIn.getSourceCurrencyType(), conversionIn.getDestinedCurrencyType());
 
-            Saldo source = sourceSaldo.get();
-            source.setBalance(source.getBalance().subtract(conversionIn.getBalance()));
+        BigDecimal sourceBalanceBefore = sourceSaldo.getBalance();
+        sourceSaldo.setBalance(sourceSaldo.getBalance().subtract(conversionIn.getBalance()));
 
-            Saldo destined = destinedSaldo.get();
-            destined.setBalance(destined.getBalance().add(convertedBalance));
+        BigDecimal destinedBalanceBefore = destinedSaldo.getBalance();
+        destinedSaldo.setBalance(destinedSaldo.getBalance().add(convertedBalance));
 
-            saldoRepository.save(source);
-            saldoRepository.save(destined);
-        }
+        Saldo sourceSaldoSaved = saldoRepository.save(sourceSaldo);
+        Saldo destinedSaldoSaved = saldoRepository.save(destinedSaldo);
+
+        return ConversionOut.builder()
+                .balance(conversionIn.getBalance())
+                .sourceCurrencyType(conversionIn.getSourceCurrencyType())
+                .destinedCurrencyType(conversionIn.getDestinedCurrencyType())
+                .sourceSaldoBeforeConversion(sourceBalanceBefore)
+                .sourceSaldoAfterConversion(sourceSaldoSaved.getBalance())
+                .destinedSaldoBeforeConversion(destinedBalanceBefore)
+                .destinedSaldoAfterConversion(destinedSaldoSaved.getBalance())
+                .build();
     }
 
-    private boolean hasSufficientBalance(Optional<Saldo> sourceSaldo) {
-        return sourceSaldo.map(Saldo::getBalance)
-                .filter(balance -> balance.signum() > 0)
-                .isPresent();
+    private boolean hasSufficientBalance(Saldo sourceSaldo, BigDecimal balance) {
+        return sourceSaldo.getBalance().compareTo(balance) >= 0;
     }
 
-    private Optional<Saldo> getSaldo(BankAccount bankAccount, CurrencyType currencyType) {
+    private Saldo getSaldo(BankAccount bankAccount, CurrencyType currencyType) {
         return bankAccount.getSaldos()
                 .stream()
                 .filter(saldo -> saldo.getCurrencyType() == currencyType)
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(currencyType + "saldo not found"));
     }
 
 }

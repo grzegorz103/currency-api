@@ -39,7 +39,7 @@ public class UserControllerTest {
 
     @Test
     public void createUserTest() throws Exception {
-        doNothing().when(userService).create(any(UserIn.class));
+        when(userService.create(any(UserIn.class))).thenReturn(new UserOut());
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
@@ -53,8 +53,6 @@ public class UserControllerTest {
 
     @Test
     public void createUserNoBodyTest() throws Exception {
-        doNothing().when(userService).create(any(UserIn.class));
-
         this.mockMvc.perform(post(BASE_URL))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isBadRequest());

@@ -21,4 +21,7 @@ public abstract class AbstractNbpCurrencyProvider {
         this.currencies.clear();
     }
 
+    public List<NbpCurrency> getCurrencies() {
+        return currencies;
+    }
 }

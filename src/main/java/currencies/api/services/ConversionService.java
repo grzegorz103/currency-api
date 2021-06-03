@@ -5,6 +5,6 @@ import currencies.api.web.dto.ConversionOut;
 
 public interface ConversionService {
 
-    void create(ConversionIn conversionIn);
+    ConversionOut create(ConversionIn conversionIn);
 
 }
