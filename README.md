@@ -10,7 +10,7 @@ Currency API based on current NBP currency values.<br>
 * JUnit, Mockito
 * Maven
 
-##Instalation
+## Instalation
 
 ```
 $ mvn spring-boot:run
