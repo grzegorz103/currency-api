@@ -2,12 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone') {
-            steps {
-                git url: 'https://github.com/grzegorz103/currency-api.git', branch: 'BRANCH_NAME'
-            }
-        }
-
         stage('Test') {
             steps {
                 sh "mvn test"
