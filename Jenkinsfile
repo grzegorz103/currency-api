@@ -16,7 +16,7 @@ pipeline {
 
         stage('Build Docker image') {
             steps {
-                sh "docker build -t currency-api:${BUILD_NUMBER} ."
+                sh "docker build -t ${JOB_NAME}-${BRANCH_NAME}:${BUILD_NUMBER} ."
             }
         }
 
