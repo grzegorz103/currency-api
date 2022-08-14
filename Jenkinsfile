@@ -16,7 +16,7 @@ pipeline {
 
         stage('Build Docker image') {
             steps {
-                sh "docker build -t ${JOB_NAME}-${BRANCH_NAME}:${BUILD_NUMBER} ."
+                sh "docker build -t ${JOB_NAME}:${BUILD_NUMBER} ."
             }
         }
 
